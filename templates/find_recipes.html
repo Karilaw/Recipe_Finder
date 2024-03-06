@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recipe Finder</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="centered-content">
+        <h2>Ingredients:</h2>
+        <input type="text" placeholder="Enter ingredients...">
+        <input type="submit" value="Submit">
+    </div>
+    <footer>
+        © 2024 Recipe Finder
+    </footer>
+    <script src="{{ url_for('static', filename='js/recipe_result.js') }}"></script>
+</body>
+</html>
