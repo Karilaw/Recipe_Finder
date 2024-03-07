@@ -19,4 +19,9 @@ function displayRecipes(data) {
         recipeElement.innerHTML = `<h2>${recipe.title}</h2><img src="${recipe.image}" alt="${recipe.title}"><a href="${recipe.sourceUrl}">View Recipe</a>`;
         recipesDiv.appendChild(recipeElement);
     });
+
+    document.getElementById('submit-button').addEventListener('click', function() {
+        this.style.fontWeight = 'bold';
+    });
+    
 }

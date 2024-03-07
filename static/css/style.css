@@ -93,3 +93,52 @@ footer {
     background-color: #f2dede;
     border-color: #ebccd1;
 }
+
+#submit-button:active {
+    font-weight: bold;
+}
+
+.recipe-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.recipe-card {
+    flex: 1 0 21%;  /* Adjust this to change the card width */
+    margin: 1%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    text-align: center;
+    background-color: #f1f1f1;
+}
+
+.recipe-card img {
+    width: 100%;  /* This will make the image take the full width of the card */
+    height: auto;  /* This will maintain the image aspect ratio */
+}
+
+.recipe-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.recipe-card {
+    flex: 1 0 21%;  /* Adjust this value to control the number of cards per row */
+    margin: 1%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    text-align: center;
+    background-color: #f1f1f1;
+}
+
+.recipe-card img {
+    width: 100%;  /* Make the image take up the full width of its container */
+    height: auto;  /* Keep the original aspect ratio of the image */
+}
+
+.recipe-card a {
+    display: block;  /* Make the link take up its own line */
+    text-align: center;  /* Center the link text */
+}

@@ -21,10 +21,11 @@
         {% endif %}
     {% endwith %}
     <div class="centered-content">
+        <h2>Ingredients:</h2>
         <form action="{{ url_for('find_recipes') }}" method="POST">
             <input type="text" name="ingredients" placeholder="Enter ingredients...">
             <input type="submit" id="submit-button" value="Submit">
-        </form>        
+        </form>
     </div>
     <footer>
         © 2024 Recipe Finder

@@ -34,3 +34,7 @@ def save_user_to_database(username, password_hash):
 def get_user_from_database(user_id):
     user = User.query.get(user_id)
     return user
+
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.JSON)
