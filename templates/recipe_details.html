@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Recipe Finder</title>
+    <title>Recipe Details</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .recipe-card {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            width: 80%;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .recipe-card img {
+            width: 50%;  /* control the size of the image */
+            height: auto;
+        }
+        .recipe-card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    <div class="centered-content">
-        <h2>Ingredients:</h2>
-        <form action="{{ url_for('find_recipes') }}" method="POST">
-            <input type="text" name="ingredients" placeholder="Enter ingredients...">
-            <input type="submit" id="submit-button" value="Submit">
-        </form>
+    <div class="recipe-card">
+        <h2>{{ recipe.title }}</h2>
+        <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+        <p>{{ recipe.instructions|safe }}</p>
+        <!-- Add more recipe details here -->
     </div>
-    <footer>
-        © 2024 Recipe Finder
-    </footer>
     <script src="{{ url_for('static', filename='js/recipe_result.js') }}"></script>
 </body>
 </html>

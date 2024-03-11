@@ -3,6 +3,48 @@
 <head>
     <title>Recipe Finder</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa; /* Light grey background */
+            color: #212529; /* Dark grey text */
+        }
+        nav {
+            background-color: #6c757d; /* Dark grey navigation bar */
+            color: #fff;
+            padding: 15px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .centered-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #6c757d; /* Dark grey heading */
+        }
+        p {
+            line-height: 1.6;
+        }
+        footer {
+            background-color: #6c757d; /* Dark grey footer */
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -17,13 +59,8 @@
     <div class="centered-content">
         <header>
             <h1>Welcome to Recipe Finder!</h1>
-            <p>Enter the ingredients you have on hand, and we'll find recipes for you.</p>
+            <p>Discover the joy of cooking with Recipe Finder! Explore thousands of recipes, save your favorites, and share your culinary journey with others. Whether you're a seasoned chef or a beginner, Recipe Finder is here to guide you every step of the way. Let's start cooking!</p>
         </header>
-        <h2>Ingredients:</h2>
-        <form action="/find-recipes" method="post">
-            <input type="text" id="ingredients" name="ingredients" placeholder="Enter ingredients...">
-            <input type="submit" value="Get Started">
-        </form>
     </div>
     <footer>
         <p>© 2024 Recipe Finder</p>

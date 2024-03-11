@@ -9,6 +9,7 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/logout">Logout</a></li>
+            <li> <a href="{{ url_for('recipe_list') }}">Your Recipes</a></li>
         </ul>
     </nav>
     {% with messages = get_flashed_messages(with_categories=true) %}

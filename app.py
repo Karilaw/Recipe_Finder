@@ -1,9 +1,9 @@
 from flask import Flask, flash, redirect, render_template, request, jsonify, session, url_for
-from flask_login import login_required, login_user, logout_user, LoginManager
+from flask_login import current_user, login_required, login_user, logout_user, LoginManager
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash
 import requests
-from models import Recipe, db
+from models import db
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a\xe0\xf9\x0fxkhX5e\tQ\xdd\x05\xc8\xe2'
@@ -23,7 +23,7 @@ def load_user(user_id):
 db.init_app(app)
 
 with app.app_context():
-    from models import User
+    from models import User, Recipe
     db.create_all()
 
 from models import get_user_from_database
@@ -38,8 +38,8 @@ def home():
 def get_recipes(ingredients):
     response = requests.get(f'https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredients}&apiKey=240e492f44764327ac76abf321100d8b')
     return response.json()
-@app.route('/login', methods=['GET', 'POST'])
 
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -52,7 +52,10 @@ def login():
         if user is not None and user.check_password(password):
             # Log the user in and redirect to the find_recipes route
             login_user(user)
+            flash('Login successful!', 'success')  # Display a success message
             return redirect(url_for('find_recipes'))
+        else:
+            flash('Invalid username or password.', 'error')  # Display an error message
 
     # Show the login form
     return render_template('login.html')
@@ -61,17 +64,31 @@ def login():
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get('password')
-        password_hash = generate_password_hash(password)
+        confirm_password = request.form.get('confirm_password')
 
-        # Check if a user with the given username already exists
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user is not None:
-            flash('Username already taken. Please choose a different one.', 'error')
+        # Check if the passwords match
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
             return redirect(url_for('register'))
 
-        # Create a new user and save it to the database
-        user = User(username, password_hash)
+        # Check if the username and password meet the preferred standard
+        if len(username) < 5 or len(password) < 8:
+            flash('Username must be at least 5 characters and password must be at least 8 characters.', 'error')
+            return redirect(url_for('register'))
+
+        # Check if a user with the given username or email already exists
+        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing_user is not None:
+            flash('Username or email already taken. Please choose a different one.', 'error')
+            return redirect(url_for('register'))
+
+        # Hash the password and create a new user
+        password_hash = generate_password_hash(password)
+        user = User(username=username, email=email, password_hash=password_hash)  # replace 'password' with 'password_hash'
+
+        # Save the new user to the database
         db.session.add(user)
         db.session.commit()
 
@@ -79,9 +96,11 @@ def register():
         flash('You have successfully registered!', 'success')
 
         return redirect(url_for('login'))
+
     return render_template('register.html')
 
 @app.route('/find-recipes', methods=['GET', 'POST'])
+@login_required  # ensure the user is logged in
 def find_recipes():
     if request.method == 'POST':
         ingredients = request.form.get('ingredients')
@@ -89,10 +108,10 @@ def find_recipes():
         if response.status_code == 200:
             flash('Request submitted successfully!', 'success')
             recipes = response.json()
-            recipe = Recipe(data=recipes)  # Create a new Recipe object
-            db.session.add(recipe)  # Add the new Recipe to the session
-            db.session.commit()  # Commit the session to save the Recipe
-            return redirect(url_for('recipe_list'))  # Redirect to the recipe_list route
+            recipe = Recipe(data=recipes, user_id=current_user.id)  # associate the recipe with the current user
+            db.session.add(recipe)
+            db.session.commit()
+            return redirect(url_for('recipe_list'))
         else:
             flash('There was an error submitting the request.', 'error')
     return render_template('find_recipes.html')
@@ -106,9 +125,10 @@ def recipe_details(recipe_id):
     return render_template('recipe_details.html', recipe=recipe)
 
 @app.route('/recipe-list', methods=['GET', 'POST'])
+@login_required  # ensure the user is logged in
 def recipe_list():
-    # Get the recipes from the database
-    recipe_objects = Recipe.query.all()
+    # Get the recipes from the database for the current user
+    recipe_objects = Recipe.query.filter_by(user_id=current_user.id).all()
     recipes = [recipe.data for recipe in recipe_objects]  # Extract the recipe dictionaries
     return render_template('recipe_list.html', recipes=recipes)
 
