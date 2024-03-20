@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
@@ -42,3 +43,15 @@ class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.JSON)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(120))
+    message = db.Column(db.Text)
+
+    def __init__(self, name, email, message):
+        self.name = name
+        self.email = email
+        self.message = message

@@ -1,39 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Contact Us - Recipe Finder</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         /* Additional styles specific to this page */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2; /* Light grey background */
-            color: #333; /* Dark grey text */
+            background-color: #f8f9fa; /* Light grey background */
+            color: #212529; /* Dark grey text */
             margin: 0;
             padding: 0;
         }
 
         nav {
-            background-color: #007bff; /* Bootstrap's primary blue */
+            background-color: #343a40; /* Dark grey navigation bar */
             color: #fff;
-            padding: 10px;
+            padding: 15px 0;
         }
 
         nav ul {
             list-style-type: none;
             padding: 0;
-            margin: 0 auto;
-            display: inline-block;
-        }
-
-        nav ul li {
-            display: inline;
-            margin: 0 10px;
-        }
-
-        nav ul li:last-child {
-            margin-right: 0;
+            display: flex;
+            justify-content: space-around;
         }
 
         nav ul li a {
@@ -42,7 +33,7 @@
         }
 
         .centered-content {
-            max-width: 400px;
+            max-width: 800px;
             margin: 50px auto;
             padding: 20px;
             background-color: #fff;
@@ -50,19 +41,26 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        h2 {
+        h1 {
+            color: #343a40; /* Dark grey heading */
             text-align: center;
             margin-bottom: 20px;
-            color: #007bff;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
             margin-bottom: 5px;
+            color: #555; /* Dark grey label text */
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="email"],
+        textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -75,7 +73,7 @@
             padding: 10px;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #007bff; /* Bootstrap's primary blue */
             color: #fff;
             cursor: pointer;
         }
@@ -85,7 +83,7 @@
         }
 
         footer {
-            background-color: #007bff;
+            background-color: #343a40; /* Dark grey footer */
             color: #fff;
             text-align: center;
             padding: 15px 0;
@@ -103,30 +101,26 @@
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/login">Login</a></li>
             <li><a href="/register">Register</a></li>
         </ul>
     </nav>
     <div class="centered-content">
-        <h2>Login</h2>
-
-        <!-- Flash messages here -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-        <form action="/login" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username...">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password...">
-            <input type="submit" value="Login">
-        </form>
+        <header>
+            <h1>Contact Us</h1>
+            <p>We'd love to hear from you! Whether you have a question about features, trials, pricing, need a demo, or anything else, our team is ready to answer all your questions.</p>
+            <form action="/contact" method="post">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                <input type="submit" value="Submit">
+            </form>
+        </header>
     </div>
     <footer>
         <p>© 2024 Recipe Finder</p>

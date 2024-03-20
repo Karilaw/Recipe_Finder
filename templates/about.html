@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About Us - Recipe Finder</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </nav>
+    <div class="centered-content">
+        <header>
+            <h1>About Us</h1>
+            <p>Welcome to our Recipe Finder App! We are passionate about making the cooking process easier and more enjoyable for everyone.</p>
+            <p>Our app is designed to help you discover new recipes from around the world. Whether you're a seasoned chef or a beginner in the kitchen, our app provides a wide range of recipes to suit all tastes and skill levels.</p>
+            <p>We understand that everyone has unique dietary needs and preferences. That's why our app allows you to search for recipes based on ingredients you have on hand, dietary restrictions, cuisine type, and more.</p>
+            <p>This app is built using Flask, a lightweight and powerful web framework for Python. We chose Flask for its simplicity and flexibility, allowing us to provide a seamless and user-friendly experience.</p>
+            <p>We hope you enjoy using our Recipe Finder App as much as we enjoyed building it. Happy cooking!</p>
+        </header>
+    </div>
+    <footer>
+        <p>© 2024 Recipe Finder</p>
+    </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/recipe_result.js') }}"></script>
+</body>
+</html>

@@ -23,7 +23,7 @@ def load_user(user_id):
 db.init_app(app)
 
 with app.app_context():
-    from models import User, Recipe
+    from models import User, Recipe, Contact
     db.create_all()
 
 from models import get_user_from_database
@@ -106,15 +106,19 @@ def find_recipes():
         ingredients = request.form.get('ingredients')
         response = requests.get(f'https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredients}&apiKey=240e492f44764327ac76abf321100d8b')
         if response.status_code == 200:
-            flash('Request submitted successfully!', 'success')
             recipes = response.json()
-            recipe = Recipe(data=recipes, user_id=current_user.id)  # associate the recipe with the current user
-            db.session.add(recipe)
-            db.session.commit()
-            return redirect(url_for('recipe_list'))
+            if recipes:  # check if the response contains data
+                recipe = Recipe(data=recipes, user_id=current_user.id)  # associate the recipe with the current user
+                db.session.add(recipe)
+                db.session.commit()
+                flash('Request submitted successfully!', 'success')  # flash the success message
+                return redirect(url_for('recipe_list'))  # redirect to the recipe_list page
+            else:
+                flash('There was an error submitting the request. No data was returned.', 'error')
         else:
             flash('There was an error submitting the request.', 'error')
     return render_template('find_recipes.html')
+
 
 @app.route('/recipe-details/<int:recipe_id>', methods=['GET', 'POST'])
 def recipe_details(recipe_id):
@@ -127,9 +131,9 @@ def recipe_details(recipe_id):
 @app.route('/recipe-list', methods=['GET', 'POST'])
 @login_required  # ensure the user is logged in
 def recipe_list():
-    # Get the recipes from the database for the current user
-    recipe_objects = Recipe.query.filter_by(user_id=current_user.id).all()
-    recipes = [recipe.data for recipe in recipe_objects]  # Extract the recipe dictionaries
+    # Get the recipes from the database for the current user, ordered by the time they were added (most recent first)
+    recipe_objects = Recipe.query.filter_by(user_id=current_user.id).order_by(Recipe.timestamp.desc()).all()
+    recipes = [recipe.data for recipe in recipe_objects]
     return render_template('recipe_list.html', recipes=recipes)
 
 @app.route('/logout')
@@ -137,6 +141,30 @@ def recipe_list():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        # Get the form data
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+
+        # Create a new Contact object
+        contact = Contact(name=name, email=email, message=message)
+
+        # Add the new Contact object to the database
+        db.session.add(contact)
+        db.session.commit()
+
+        flash('Your message has been sent successfully!', 'success')
+        return redirect(url_for('contact'))
+    else:
+        return render_template('contact.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -3,33 +3,77 @@
 <head>
     <title>Recipe List</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
+        /* Additional styles specific to this page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa; /* Light grey background */
+            color: #212529; /* Dark grey text */
+            margin: 0;
+            padding: 0;
+        }
+
         .recipe-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 20px;
+            padding: 20px;
         }
+
         .recipe-card {
-            border: 1px solid #ccc;
-            margin: 10px;
-            padding: 10px;
-            width: 300px;
-            text-align: center;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
         }
+
+        .recipe-card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #333; /* Dark grey heading */
+        }
+
         .recipe-card img {
             width: 100%;
             height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .recipe-card .view-recipe {
+            display: block;
+            background-color: #007bff; /* Bootstrap's primary blue */
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .recipe-card .view-recipe:hover {
+            background-color: #0056b3; /* Darken the color on hover */
         }
     </style>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
     <div class="recipe-container">
-        {% for recipe in recipes %}
-            {% for data in recipe %}
+        {% for recipe_list in recipes %}
+            {% for recipe in recipe_list %}
                 <div class="recipe-card">
-                    <h2>{{ data['title'] }}</h2>
-                    <img src="{{ data['image'] }}" alt="{{ data['title'] }}">
-                    <a href="{{ url_for('recipe_details', recipe_id=data['id']) }}">View Recipe</a>
+                    <h2>{{ recipe['title'] }}</h2>
+                    <img src="{{ recipe['image'] }}" alt="{{ recipe['title'] }}">
+                    <a href="{{ url_for('recipe_details', recipe_id=recipe['id']) }}" class="view-recipe">View Recipe</a>
                 </div>
             {% endfor %}
         {% endfor %}

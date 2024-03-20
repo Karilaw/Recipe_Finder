@@ -3,6 +3,103 @@
 <head>
     <title>Register</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        /* Additional styles specific to this page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9; /* Light grey background */
+            color: #333; /* Dark grey text */
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #007bff; /* Bootstrap's primary blue */
+            color: #fff;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0 auto;
+            display: inline-block;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li:last-child {
+            margin-right: 0;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .centered-content {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555; /* Dark grey label text */
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3; /* Darken the color on hover */
+        }
+
+        footer {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -26,14 +123,14 @@
         {% endwith %}
 
         <form action="/register" method="post">
-            <label for="username">Username:</label><br>
-            <input type="text" id="username" name="username" placeholder="Enter your username..."><br>
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" placeholder="Enter your email..."><br>
-            <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password" placeholder="Enter your password..."><br>
-            <label for="confirm_password">Confirm Password:</label><br>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password..."><br>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username...">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email...">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password...">
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password...">
             <input type="submit" value="Register">
         </form>
     </div>
