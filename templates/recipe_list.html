@@ -4,6 +4,7 @@
     <title>Recipe List</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         /* Additional styles specific to this page */
         body {
@@ -74,10 +75,24 @@
                     <h2>{{ recipe['title'] }}</h2>
                     <img src="{{ recipe['image'] }}" alt="{{ recipe['title'] }}">
                     <a href="{{ url_for('recipe_details', recipe_id=recipe['id']) }}" class="view-recipe">View Recipe</a>
+                    <form action="{{ url_for('delete_recipe', recipe_id=recipe['id']) }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
             {% endfor %}
         {% endfor %}
     </div>
+    <script>
+        const deleteButtons = document.querySelectorAll('.btn-danger');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const confirmation = confirm('Are you sure you want to delete this recipe?');
+                if (!confirmation) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
     <script src="{{ url_for('static', filename='js/recipe_result.js') }}"></script>
 </body>
 </html>

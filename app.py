@@ -1,6 +1,8 @@
-from flask import Flask, flash, redirect, render_template, request, jsonify, session, url_for
+import json
+from flask import Flask, abort, flash, redirect, render_template, request, jsonify, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user, LoginManager
 from flask_migrate import Migrate
+from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 import requests
 from models import db
@@ -135,6 +137,33 @@ def recipe_list():
     recipe_objects = Recipe.query.filter_by(user_id=current_user.id).order_by(Recipe.timestamp.desc()).all()
     recipes = [recipe.data for recipe in recipe_objects]
     return render_template('recipe_list.html', recipes=recipes)
+
+@app.route('/delete-recipe/<int:recipe_id>', methods=['POST'])
+@login_required
+def delete_recipe(recipe_id):
+    # Retrieve the recipe from the database
+    recipe = Recipe.query.get(recipe_id)
+    
+    if recipe:
+        # Deserialize the JSON data into a Python dictionary
+        recipe_data = json.loads(recipe.data)
+        
+        # Check if the recipe's id matches the provided recipe_id
+        if recipe_data['id'] == recipe_id:
+            # Check if the user is authorized to delete the recipe
+            if recipe.user_id != current_user.id:
+                flash("You do not have permission to delete this recipe.", "error")
+                return redirect(url_for("recipe_list"))
+
+            # Delete the recipe
+            db.session.delete(recipe)
+            db.session.commit()
+            flash('Your recipe has been deleted!', 'success')
+            return redirect(url_for('recipe_list'))
+
+    # If no recipe with the given recipe_id is found
+    flash('The recipe you are trying to delete does not exist.', 'error')
+    return redirect(url_for('recipe_list'))
 
 @app.route('/logout')
 @login_required
