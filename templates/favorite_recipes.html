@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Recipe List</title>
+    <title>Favarite Recipes</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -62,8 +62,7 @@
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="{{ url_for('find_recipes') }}">Find Recipes</a></li>
-            <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
+            <li> <a href="{{ url_for('recipe_list') }}"> Searched Recipes</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
@@ -82,11 +81,8 @@
                 <h2>{{ recipe.data['title'] }}</h2>
                 <img src="{{ recipe.data['image'] }}" alt="{{ recipe.data['title'] }}">
                 <a href="{{ url_for('recipe_details', spoonacular_id=recipe.spoonacular_id) }}" class="view-recipe">View Recipe</a>
-                <form action="{{ url_for('delete_recipe', spoonacular_id=recipe.spoonacular_id) }}" method="POST">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-                <form action="{{ url_for('add_to_favorites', spoonacular_id=recipe.spoonacular_id) }}" method="post">
-                    <input type="submit" value="Add to Favorites">
+                <form action="{{ url_for('remove_from_favorites', spoonacular_id=recipe.spoonacular_id) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Remove from Favorites</button>
                 </form>
             </div>
         {% endfor %}

@@ -110,8 +110,14 @@ def find_recipes():
         if response.status_code == 200:
             recipes = response.json()
             if recipes:  # check if the response contains data
-                recipe = Recipe(data=recipes, user_id=current_user.id)  # associate the recipe with the current user
-                db.session.add(recipe)
+                print(recipes)
+                for recipe_data in recipes:
+                    # Check if a Recipe with this spoonacular_id already exists
+                    existing_recipe = Recipe.query.get(recipe_data['id'])
+                    if existing_recipe is None:
+                        # If not, create a new Recipe
+                        recipe = Recipe(spoonacular_id=recipe_data['id'], data=recipe_data, user_id=current_user.id)  # associate each recipe with the current user
+                        db.session.add(recipe)
                 db.session.commit()
                 flash('Request submitted successfully!', 'success')  # flash the success message
                 return redirect(url_for('recipe_list'))  # redirect to the recipe_list page
@@ -121,49 +127,70 @@ def find_recipes():
             flash('There was an error submitting the request.', 'error')
     return render_template('find_recipes.html')
 
-
-@app.route('/recipe-details/<int:recipe_id>', methods=['GET', 'POST'])
-def recipe_details(recipe_id):
+@app.route('/recipe-details/<int:spoonacular_id>', methods=['GET', 'POST'])
+def recipe_details(spoonacular_id):
     apiKey = 'YOUR_API_KEY'  # Replace with your actual API key
-    url = f'https://api.spoonacular.com/recipes/{recipe_id}/information?apiKey=240e492f44764327ac76abf321100d8b'
+    url = f'https://api.spoonacular.com/recipes/{spoonacular_id}/information?apiKey=240e492f44764327ac76abf321100d8b'
     response = requests.get(url)
     recipe = response.json()
     return render_template('recipe_details.html', recipe=recipe)
+
 
 @app.route('/recipe-list', methods=['GET', 'POST'])
 @login_required  # ensure the user is logged in
 def recipe_list():
     # Get the recipes from the database for the current user, ordered by the time they were added (most recent first)
-    recipe_objects = Recipe.query.filter_by(user_id=current_user.id).order_by(Recipe.timestamp.desc()).all()
-    recipes = [recipe.data for recipe in recipe_objects]
+    recipes = Recipe.query.filter_by(user_id=current_user.id).order_by(Recipe.timestamp.desc()).all()
     return render_template('recipe_list.html', recipes=recipes)
 
-@app.route('/delete-recipe/<int:recipe_id>', methods=['POST'])
+@app.route('/delete-recipe/<int:spoonacular_id>', methods=['POST'])
 @login_required
-def delete_recipe(recipe_id):
-    # Retrieve the recipe from the database
-    recipe = Recipe.query.get(recipe_id)
-    
+def delete_recipe(spoonacular_id):
+    # Get the Recipe instance from the database using the spoonacular_id
+    recipe = Recipe.query.get(spoonacular_id)
     if recipe:
-        # Deserialize the JSON data into a Python dictionary
-        recipe_data = json.loads(recipe.data)
-        
-        # Check if the recipe's id matches the provided recipe_id
-        if recipe_data['id'] == recipe_id:
-            # Check if the user is authorized to delete the recipe
-            if recipe.user_id != current_user.id:
-                flash("You do not have permission to delete this recipe.", "error")
-                return redirect(url_for("recipe_list"))
-
-            # Delete the recipe
-            db.session.delete(recipe)
-            db.session.commit()
-            flash('Your recipe has been deleted!', 'success')
-            return redirect(url_for('recipe_list'))
-
-    # If no recipe with the given recipe_id is found
+        # Check if the user is authorized to delete the recipe
+        if recipe.user_id != current_user.id:
+            flash("You do not have permission to delete this recipe.", "error")
+            return redirect(url_for("recipe_list"))
+        # Delete the recipe
+        db.session.delete(recipe)
+        db.session.commit()
+        flash('Your recipe has been deleted!', 'success')
+        return redirect(url_for('recipe_list'))
+    # If no recipe with the given spoonacular_id is found
     flash('The recipe you are trying to delete does not exist.', 'error')
     return redirect(url_for('recipe_list'))
+
+@app.route('/add-to-favorites/<int:spoonacular_id>', methods=['POST'])
+@login_required
+def add_to_favorites(spoonacular_id):
+    recipe = Recipe.query.filter_by(spoonacular_id=spoonacular_id, user_id=current_user.id).first()
+    if recipe:
+        recipe.is_favorite = True
+        db.session.commit()
+        flash('Recipe added to favorites!', 'success')
+    else:
+        flash('Recipe not found.', 'error')
+    return redirect(url_for('recipe_list'))
+
+@app.route('/favorite-recipes', methods=['GET'])
+@login_required
+def favorite_recipes():
+    recipes = Recipe.query.filter_by(user_id=current_user.id, is_favorite=True).all()
+    return render_template('favorite_recipes.html', recipes=recipes)
+
+@app.route('/remove-from-favorites/<int:spoonacular_id>', methods=['POST'])
+@login_required
+def remove_from_favorites(spoonacular_id):
+    recipe = Recipe.query.filter_by(spoonacular_id=spoonacular_id, user_id=current_user.id).first()
+    if recipe:
+        recipe.is_favorite = False  # Mark the recipe as not favorite
+        db.session.commit()
+        flash('Recipe removed from favorites!', 'success')
+    else:
+        flash('Recipe not found.', 'error')
+    return redirect(url_for('favorite_recipes'))
 
 @app.route('/logout')
 @login_required
@@ -174,6 +201,10 @@ def logout():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.template_filter('to_int')
+def to_int(value):
+    return int(value)
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():

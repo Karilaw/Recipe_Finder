@@ -96,6 +96,14 @@
     </style>    
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li> <a href="{{ url_for('recipe_list') }}"> Searched Recipe</a></li>
+            <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
     <div class="recipe-card">
         <h2>{{ recipe.title }}</h2>
         <img src="{{ recipe.image }}" alt="{{ recipe.title }}">

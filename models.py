@@ -40,10 +40,11 @@ def get_user_from_database(user_id):
     return user
 
 class Recipe(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    spoonacular_id = db.Column(db.Integer, primary_key=True)  # new primary key
     data = db.Column(db.JSON)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    is_favorite = db.Column(db.Boolean, default=False)
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
