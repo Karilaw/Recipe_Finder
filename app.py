@@ -1,10 +1,13 @@
 import json
+import os
 from flask import Flask, abort, flash, redirect, render_template, request, jsonify, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user, LoginManager
 from flask_migrate import Migrate
+from flask_mail import Mail, Message
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 import requests
+from dotenv import load_dotenv
 from models import db
 
 app = Flask(__name__)
@@ -16,6 +19,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 migrate = Migrate(app, db)
+
+load_dotenv()
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
+
+mail = Mail(app)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -35,6 +48,18 @@ from models import save_user_to_database
 @app.route('/')
 def home():
     return render_template('home.html')
+
+def send_password_reset_email(user):
+    token = user.get_reset_password_token()
+    msg = Message('Reset Your Password',
+                  sender='noreply@recipefinder.com',
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_password', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
 
 @app.route('/recipes', methods=['POST'])
 def get_recipes(ingredients):
@@ -191,6 +216,47 @@ def remove_from_favorites(spoonacular_id):
     else:
         flash('Recipe not found.', 'error')
     return redirect(url_for('favorite_recipes'))
+
+@app.route('/reset-password', methods=['GET', 'POST'])
+def reset_password_request():
+    if request.method == 'POST':
+        user = User.query.filter_by(email=request.form['email']).first()
+        if user:
+            print(f"User {user.email} found, sending password reset email.")
+            send_password_reset_email(user)
+            flash('Check your email for the instructions to reset your password')
+        
+        else:
+            flash('No user found with that email.')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.verify_reset_password_token(token)
+    if not user:
+        flash('Invalid or expired token. Please try again.', 'error')
+        return redirect(url_for('login'))  
+
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if not new_password or not confirm_password:
+            flash('Please enter both new password and confirm password.', 'error')
+            return redirect(request.url)
+
+        if new_password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'error')
+            return redirect(request.url)
+
+        user.set_password(new_password)
+        db.session.commit()
+
+        flash('Your password has been successfully reset.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', token=token)
 
 @app.route('/logout')
 @login_required
