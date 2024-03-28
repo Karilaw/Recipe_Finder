@@ -10,8 +10,13 @@ import requests
 from dotenv import load_dotenv
 from models import db
 
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'a\xe0\xf9\x0fxkhX5e\tQ\xdd\x05\xc8\xe2'
+
+secret_key = os.getenv("SECRET_KEY")
+
+app.config['SECRET_KEY'] = secret_key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 login_manager = LoginManager()
@@ -20,7 +25,6 @@ login_manager.init_app(app)
 
 migrate = Migrate(app, db)
 
-load_dotenv()
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
@@ -137,7 +141,6 @@ def find_recipes():
         if response.status_code == 200:
             recipes = response.json()
             if recipes:  # check if the response contains data
-                print(recipes)
                 for recipe_data in recipes:
                     # Check if a Recipe with this spoonacular_id already exists
                     existing_recipe = Recipe.query.get(recipe_data['id'])
@@ -157,7 +160,7 @@ def find_recipes():
 @app.route('/recipe-details/<int:spoonacular_id>', methods=['GET', 'POST'])
 def recipe_details(spoonacular_id):
     apiKey = 'YOUR_API_KEY'  # Replace with your actual API key
-    url = f'https://api.spoonacular.com/recipes/{spoonacular_id}/information?apiKey=240e492f44764327ac76abf321100d8b'
+    url = f'https://api.spoonacular.com/recipes/{spoonacular_id}/information?apiKey={spoonacular_api_key}'
     response = requests.get(url)
     recipe = response.json()
     return render_template('recipe_details.html', recipe=recipe)
