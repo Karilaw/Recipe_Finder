@@ -20,6 +20,11 @@
             padding: 15px 0;
         }
 
+        nav .container {
+            display: flex;
+            justify-content: center;
+        }
+
         nav ul {
             list-style-type: none;
             padding: 0;
@@ -95,19 +100,42 @@
         footer p {
             margin: 0;
         }
+
+        /* Flash message styles */
+        .flash-message {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-        </ul>
+        <div class="container">
+            <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 20px;">Recipe Finder</a>
+            <ul>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+            </ul>
+        </div>
     </nav>
     <div class="centered-content">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         <header>
             <h1>Contact Us</h1>
             <p>We'd love to hear from you! Whether you have a question about features, trials, pricing, need a demo, or anything else, our team is ready to answer all your questions.</p>
