@@ -18,18 +18,25 @@
             background-color: #007bff; /* Bootstrap's primary blue */
             color: #fff;
             padding: 15px 0;
+            text-align: center; /* Center the content within the navbar */
         }
 
         nav ul {
             list-style-type: none;
             padding: 0;
             display: flex;
-            justify-content: space-around;
+            justify-content: center; /* Center the list items horizontally */
+        }
+
+        nav ul li {
+            margin: 0 15px; /* Add margin between the list items */
         }
 
         nav ul li a {
             color: #fff;
             text-decoration: none;
+            font-size: 16px; /* Adjust the font size */
+            font-weight: bold; /* Add bold font weight */
         }
 
         .centered-content {
@@ -46,6 +53,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-top: 20px; /* Add margin to separate form from navbar */
         }
 
         input[type="text"] {
@@ -87,12 +95,14 @@
 </head>
 <body>
     <nav>
-        <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 24px;">Recipe Finder</a>
-        <ul>
-            <li> <a href="{{ url_for('recipe_list') }}"> Searched Recipe</a></li>
-            <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+        <div class="container">
+            <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 20px;">Recipe Finder</a>
+            <ul>
+                <li><a href="{{ url_for('recipe_list') }}">Searched Recipe</a></li>
+                <li><a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
     </nav>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

@@ -97,12 +97,14 @@
 </head>
 <body>
     <nav>
-        <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 24px;">Recipe Finder</a>
-        <ul>
-            <li> <a href="{{ url_for('recipe_list') }}"> Searched Recipe</a></li>
-            <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+        <div class="container">
+            <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 20px;">Recipe Finder</a>
+            <ul>
+                <li> <a href="{{ url_for('recipe_list') }}"> Searched Recipe</a></li>
+                <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
     </nav>
     <div class="recipe-card">
         <h2>{{ recipe.title }}</h2>
@@ -117,7 +119,7 @@
         </ul>
         <h3>Preparation:</h3>
         <ol>
-            {% for step in recipe.instructions.split('.') %}
+            {% for step in recipe.instructions.split('\n') %}
                 {% if step.strip() %}
                     <li>{{ step.strip() }}</li>
                 {% endif %}

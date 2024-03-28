@@ -60,12 +60,14 @@
 </head>
 <body>
     <nav>
-        <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 24px;">Recipe Finder</a>
-        <ul>
-            <li><a href="{{ url_for('find_recipes') }}">Find Recipes</a></li>
-            <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+        <div class="container">
+            <a class="navbar-brand" href="/" style="color: white; font-weight: bold; font-size: 20px;">Recipe Finder</a>
+            <ul>
+                <li><a href="{{ url_for('find_recipes') }}">Find Recipes</a></li>
+                <li> <a href="{{ url_for('favorite_recipes') }}">My Favorite Recipes</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
     </nav>
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
