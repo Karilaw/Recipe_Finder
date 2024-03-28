@@ -30,6 +30,8 @@ app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
 
 mail = Mail(app)
 
+spoonacular_api_key = os.getenv("SPOONACULAR_API_KEY")
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -63,7 +65,7 @@ If you did not make this request then simply ignore this email and no changes wi
 
 @app.route('/recipes', methods=['POST'])
 def get_recipes(ingredients):
-    response = requests.get(f'https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredients}&apiKey=240e492f44764327ac76abf321100d8b')
+    response = requests.get(f'https://api.spoonacular.com/recipes/findByIngredients?ingredients={ingredients}&apiKey={spoonacular_api_key}')
     return response.json()
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -222,7 +224,6 @@ def reset_password_request():
     if request.method == 'POST':
         user = User.query.filter_by(email=request.form['email']).first()
         if user:
-            print(f"User {user.email} found, sending password reset email.")
             send_password_reset_email(user)
             flash('Check your email for the instructions to reset your password')
         
