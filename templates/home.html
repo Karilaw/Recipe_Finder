@@ -155,12 +155,13 @@
             </div>
         </div>
         <footer id="footer">
-            <div class="footer-content">
+            <div class="container">
                 <div class="social-icons">
                     <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url | urlencode }}" target="_blank"><i class="fab fa-facebook-square"></i></a>
                     <a href="https://twitter.com/share?url={{ request.url | urlencode }}" target="_blank"><i class="fab fa-twitter-square"></i></a>
                     <a href="https://api.whatsapp.com/send?text={{ request.url | urlencode }}" target="_blank"><i class="fab fa-whatsapp-square"></i></a>
                 </div>
+                <p>Recipe Finder Passoking | lawrencekariithi6@gmail.com</p>
             </div>
         </footer>
         <script src="{{ url_for('static', filename='js/recipe_result.js') }}"></script>
