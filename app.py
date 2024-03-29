@@ -1,4 +1,5 @@
 import json
+import re
 import os
 from flask import Flask, abort, flash, redirect, render_template, request, jsonify, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user, LoginManager
@@ -159,12 +160,15 @@ def find_recipes():
 
 @app.route('/recipe-details/<int:spoonacular_id>', methods=['GET', 'POST'])
 def recipe_details(spoonacular_id):
-    apiKey = 'YOUR_API_KEY'  # Replace with your actual API key
+    apiKey = 'YOUR_API_KEY'
     url = f'https://api.spoonacular.com/recipes/{spoonacular_id}/information?apiKey={spoonacular_api_key}'
     response = requests.get(url)
     recipe = response.json()
-    return render_template('recipe_details.html', recipe=recipe)
 
+    # Remove HTML tags from instructions using regular expressions
+    recipe['instructions'] = re.sub(r'<[^>]*>', '', recipe['instructions'])
+
+    return render_template('recipe_details.html', recipe=recipe)
 
 @app.route('/recipe-list', methods=['GET', 'POST'])
 @login_required  # ensure the user is logged in
