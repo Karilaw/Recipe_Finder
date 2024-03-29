@@ -1,6 +1,6 @@
-from datetime import datetime
+import jwt
+from datetime import datetime, timezone, timedelta
 from flask_login import UserMixin
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -22,14 +22,22 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
     
     def get_reset_password_token(self, expires_sec=1800):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        reset_token = jwt.encode(
+            {"user_id": self.id, "exp": datetime.now(timezone.utc) + timedelta(seconds=expires_sec)},
+            current_app.config['SECRET_KEY'],
+            algorithm="HS256"
+        )
+        return reset_token  # No need to decode the token, it's already a string
     
     @staticmethod
     def verify_reset_password_token(token):
-        s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            user_id = s.loads(token)['user_id']
+            user_id = jwt.decode(
+                token,
+                current_app.config['SECRET_KEY'],
+                leeway=timedelta(seconds=10),
+                algorithms=["HS256"]
+            )['user_id']
         except:
             return None
         return User.query.get(user_id)

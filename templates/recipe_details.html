@@ -119,7 +119,7 @@
         </ul>
         <h3>Preparation:</h3>
         <ol>
-            {% for step in recipe.instructions.split('\n') %}
+            {% for step in recipe.instructions.split('.') %}
                 {% if step.strip() %}
                     <li>{{ step.strip() }}</li>
                 {% endif %}
